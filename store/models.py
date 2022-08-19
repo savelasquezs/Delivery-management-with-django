@@ -1,4 +1,5 @@
 
+from contextlib import nullcontext
 from django.db import models
 from django.contrib.auth.models import  User
 
@@ -33,6 +34,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=200)
     precio = models.IntegerField(default=0, null=False, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, blank=True, null=True)
+    imagen = models.ImageField(null=True, blank=True)
     
     def __str__(self):
         return self.nombre
