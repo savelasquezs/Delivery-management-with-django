@@ -46,12 +46,31 @@ class Pedido(models.Model):
     enviado = models.BooleanField(default=False, null=True, blank=False)
     
     def __str__(self):
-        return self.id
+        return self.transaction_id
+    
+    
+    
+    @property
+    def get_cart_total(self):
+        orderitems = self.pedido_item_set.all()
+        total=sum([item.get_total for item in orderitems])
+        return total
+    
+    @property
+    def get_cart_items(self):
+        orderitems = self.pedido_item_set.all()
+        total=sum([item.cantidad for item in orderitems])
+        return total
     
 class Pedido_item(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True)
     pedido = models.ForeignKey(Pedido, on_delete=models.SET_NULL, null=True, blank=True)
-    cantidad= models.IntegerField(default=0, blank=True, null=True) 
+    cantidad= models.IntegerField(default=0, blank=True, null=True)
+    
+    @property
+    def get_total(self):
+        total=self.producto.precio * self.cantidad
+        return total 
     
 class Envio (models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)

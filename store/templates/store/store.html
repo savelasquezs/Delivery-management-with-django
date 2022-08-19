@@ -1,5 +1,6 @@
 {% extends 'store/main.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
     <div class="row">
@@ -12,7 +13,7 @@
 
                     <button class="btn btn-outline-secondary add-btn">Agregar</button>
                     <a href="" class="btn btn-outline-success" >Ver</a>
-                    <h4 style="display:inline-block;float:right"><strong>${{product.precio}}</strong></h4>
+                    <h4 style="display:inline-block;float:right"><strong>${{product.precio|intcomma}}</strong></h4>
                 </div>
             </div>
         {% endfor %}   

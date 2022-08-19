@@ -16,11 +16,33 @@ def store(request):
     return render(request, 'store/store.html', context)
 
 def cart(request):
-    context={}
+    if request.user.is_authenticated:
+        cliente =  request.user.cliente
+        pedido, created = Pedido.objects.get_or_create(cliente=cliente, enviado=False)
+        items =pedido.pedido_item_set.all()
+        
+    else:
+        items=[]
+        print("so sorry")
+        pedido = {'get_cart_total':0,'get_cart_items':0}
+        
+    context={'items':items,
+             'pedido':pedido}
     return render(request,'store/cart.html', context)
 
 def checkout(request):
-    context={}
+    if request.user.is_authenticated:
+        cliente =  request.user.cliente
+        pedido, created = Pedido.objects.get_or_create(cliente=cliente, enviado=False)
+        items =pedido.pedido_item_set.all()
+        
+    else:
+        items=[]
+        print("so sorry")
+        pedido = {'get_cart_total':0,'get_cart_items':0}
+        
+    context={'items':items,
+             'pedido':pedido}
     return render(request, 'store/checkout.html', context)   
 
 # def registerPage(request): 
