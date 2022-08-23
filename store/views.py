@@ -12,18 +12,22 @@ def store(request):
         cliente =  request.user.cliente
         pedido, created = Pedido.objects.get_or_create(cliente=cliente, enviado=False)
         items =pedido.pedido_item_set.all()
+        cartItems= pedido.get_cart_items
+        
         
     else:
         items=[]
         print("so sorry")
         pedido = {'get_cart_total':0,'get_cart_items':0}
+        cartItems = pedido['get_cart_items']
     
     context={
         'productos':productos,
         'categorias':categorias,
         'ropavieja': ropavieja,
         'items':items,
-        'pedido':pedido
+        'pedido':pedido,
+        'cartItems':cartItems
     }
     return render(request, 'store/store.html', context)
 

@@ -32,7 +32,14 @@
                     <div style="flex:2"><img class="row-image" src="{{item.producto.imagen.url}}"></div>
                     <div style="flex:2"><p> {{item.producto.nombre}} </p></div>
                     <div style="flex:1"><p> ${{item.producto.precio|intcomma}} </p></div>
-                    <div style="flex:1"><p>x{{item.cantidad}}</p></div>
+                    <div style="flex:1">
+                        <p class="quantity"> {{item.cantidad}} </p>
+                        <div class="quantity">
+                            <img data-product="{{item.producto.id}} " data-action="add" class="chg-quantity update-cart" src="{% static  'images/arrow-up.png' %}">
+                    
+                            <img data-product="{{item.producto.id}} " data-action="remove" class="chg-quantity update-cart" src="{% static  'images/arrow-down.png' %}">
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
                 <h5>Productos: {{pedido.get_cart_items}} </h5>
