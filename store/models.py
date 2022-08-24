@@ -1,10 +1,15 @@
 
-from contextlib import nullcontext
 from django.db import models
 from django.contrib.auth.models import  User
 
-class Cliente(models.Model):
+class Usuario(models.Model):
     usuario = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=200, null=True)
+    telefono = models.CharField(max_length=200, null=True)
+    direccion = models.CharField(max_length=200, null=True, blank=True)
+
+
+class Cliente(models.Model):
     nombre = models.CharField(max_length=200, null=True)
     telefono = models.CharField(max_length=200, null=True)
     direccion = models.CharField(max_length=200, null=True, blank=True)
@@ -38,6 +43,14 @@ class Producto(models.Model):
     
     def __str__(self):
         return self.nombre
+    
+    @property
+    def imagenURL(self):
+        try:
+            url= self.imagen.url
+        except:
+            url =""
+        return url
 
 class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)

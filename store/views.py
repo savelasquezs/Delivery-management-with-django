@@ -1,25 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json
 from .models import *
+from .forms import *
 
 # Create your views here.
 def store(request):
     productos= Producto.objects.all()
     categorias=Categoria.objects.all()
     ropavieja = productos.filter(categoria__nombre="Ropa vieja")
-    if request.user.is_authenticated:
-        cliente =  request.user.cliente
-        pedido, created = Pedido.objects.get_or_create(cliente=cliente, enviado=False)
-        items =pedido.pedido_item_set.all()
-        cartItems= pedido.get_cart_items
+    
+    pedido, created = Pedido.objects.get_or_create( enviado=False)
+    items =pedido.pedido_item_set.all()
+    cartItems= pedido.get_cart_items
         
         
-    else:
-        items=[]
-        print("so sorry")
-        pedido = {'get_cart_total':0,'get_cart_items':0}
-        cartItems = pedido['get_cart_items']
+   
     
     context={
         'productos':productos,
@@ -31,31 +27,25 @@ def store(request):
     }
     return render(request, 'store/store.html', context)
 
+
+
 def cart(request):
-    if request.user.is_authenticated:
-        cliente =  request.user.cliente
-        pedido, created = Pedido.objects.get_or_create(cliente=cliente, enviado=False)
-        items =pedido.pedido_item_set.all()
+    
+    pedido, created = Pedido.objects.get_or_create( enviado=False)
+    items =pedido.pedido_item_set.all()
         
-    else:
-        items=[]
-        print("so sorry")
-        pedido = {'get_cart_total':0,'get_cart_items':0}
+    
         
     context={'items':items,
              'pedido':pedido}
     return render(request,'store/cart.html', context)
 
 def checkout(request):
-    if request.user.is_authenticated:
-        cliente =  request.user.cliente
-        pedido, created = Pedido.objects.get_or_create(cliente=cliente, enviado=False)
-        items =pedido.pedido_item_set.all()
-        
-    else:
-        items=[]
-        print("so sorry")
-        pedido = {'get_cart_total':0,'get_cart_items':0}
+    
+    pedido, created = Pedido.objects.get_or_create(enviado=False)
+    items =pedido.pedido_item_set.all()
+    
+    
         
     context={'items':items,
              'pedido':pedido}
@@ -88,9 +78,9 @@ def updateItem(request):
     
     print('Action: ', action, '/n','ProductId: ', productId)
     
-    customer = request.user.cliente
+    
     product = Producto.objects.get(id=productId)
-    pedido, created = Pedido.objects.get_or_create(cliente=customer, enviado=False)
+    pedido, created = Pedido.objects.get_or_create( enviado=False)
     
     pedidoItem, created = Pedido_item.objects.get_or_create(pedido=pedido, producto=product)
     
@@ -105,3 +95,40 @@ def updateItem(request):
         pedidoItem.delete()
     
     return JsonResponse('Item was added', safe=False)
+
+def createCustomer(request):
+    clientes= Cliente.objects.all()
+    
+    form=ClienteForm()
+    
+    if request.method=="POST":
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('create_customer')
+            
+    context={
+        'form':form,
+        'clientes':clientes
+    }
+    
+    return render(request, 'store/customer_form.html', context)
+
+
+def createProduct(request):
+    productos= Producto.objects.all()
+    form = ProductoForm()
+    if request.method=="POST":
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('create_product')
+        else:
+            print("so sorry")
+    else:
+        print('algo falló')
+    context={
+        'form':form,
+        'productos':productos
+    }
+    return render(request, 'store/products_form.html', context)

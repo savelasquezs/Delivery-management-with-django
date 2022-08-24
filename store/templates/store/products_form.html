@@ -1,0 +1,63 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% load humanize %}
+<link rel="stylesheet" href="{% static 'css/store.css' %}">
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-10 offset-1">
+        <br />
+        <h4>Productos</h4>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="" method="POST" class="d-grid" enctype="multipart/form-data" >
+                                <h1 class="mb-5">Crear Producto</h1>
+                                {% csrf_token %}
+                                {{form.as_p}}
+                                <input type="submit" value="Guardar producto" name="submit" class="btn btn-outline-primary ms-5 mt-5">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+    
+    </div>
+  </div>
+  
+  <div class="row mx-2" > 
+    <div class="col-md-12">
+      <br />
+      <h4>Productos</h4>
+      <hr />
+      <div class="card card-body">
+        <table class="table table-sm">
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Categoria</th>
+            <th>Editar</th>
+            <th>Borrar</th>
+            
+          </tr>
+          {% for producto in productos %}
+          <tr>
+              <td><img class="row-image" src="{{producto.imagenURL}}"></td>
+              <td>{{producto.nombre}} </td>
+              <td>${{producto.precio|intcomma}} </td>
+              <td>{{producto.categoria}} </td>
+              <td><a href="#" class="btn btn-primary"> Editar</a></td>
+              <td><a href="#" class="btn btn-danger"> Borrar</a></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+  
+
+  
+{% endblock content %}

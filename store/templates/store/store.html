@@ -8,7 +8,7 @@
         <div class="row">
             {% for product in productos %}
                 <div class="col-lg-4 col-md-6 col-sm-8">
-                    <img class="thumbnail" src=" {{product.imagen.url}} " alt="">
+                    <img class="thumbnail" src=" {{product.imagenURL}} " alt="">
                     <div class="box-element product">
                         <h6><strong>{{product.nombre}}</strong></h6>
                         <hr>
@@ -29,7 +29,7 @@
                 
                 {% for item in items %}
                 <div class="cart-row">
-                    <div style="flex:2"><img class="row-image" src="{{item.producto.imagen.url}}"></div>
+                    <div style="flex:2"><img class="row-image" src="{{item.producto.imagenURL}}"></div>
                     <div style="flex:2"><p> {{item.producto.nombre}} </p></div>
                     <div style="flex:1"><p> ${{item.producto.precio|intcomma}} </p></div>
                     <div style="flex:1">
@@ -75,6 +75,7 @@
                         
                         <hr>
                         <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+                        <a href="{% url 'create_customer' %}" class="btn btn-bg btn-warning me-5">Crear cliente</a>
                     </div>
                 </form>
     
