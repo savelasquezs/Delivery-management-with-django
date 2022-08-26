@@ -15,7 +15,7 @@
                             <form action="" method="POST" class="d-grid">
                                 {% csrf_token %}
                                 {{form.as_p}}
-                                <input type="submit" name="submit">
+                                <input type="submit" name="submit" class="btn btn-outline-primary ms-5 mt-5">
                             </form>                            
                         </div>
                     </div>
@@ -49,9 +49,9 @@
               <td>{{cliente.direccion}} </td>
               <td>${{cliente.valor_domi|intcomma}} </td>
               <td>{{cliente.pet_particulares}} </td>
+              <td><a href="{% url 'update_cliente' cliente.id %}" class="btn btn-primary"> Editar</a></td>
+              <td><a href="{% url 'borrar_cliente' cliente.id %}" class="btn btn-danger"> Borrar</a></td>
 
-              <td><a href="#" class="btn btn-primary"> Editar</a></td>
-              <td><a href="#" class="btn btn-danger"> Borrar</a></td>
           </tr>
           {% endfor %}
         </table>

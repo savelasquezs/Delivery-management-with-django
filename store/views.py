@@ -98,9 +98,7 @@ def updateItem(request):
 
 def createCustomer(request):
     clientes= Cliente.objects.all()
-    
     form=ClienteForm()
-    
     if request.method=="POST":
         form = ClienteForm(request.POST)
         if form.is_valid():
@@ -114,6 +112,31 @@ def createCustomer(request):
     
     return render(request, 'store/customer_form.html', context)
 
+def  updateCliente(request, pk):
+    cliente=Cliente.objects.get(id=pk)
+    clientes= Cliente.objects.all()
+    form=ClienteForm(instance=cliente)
+    if request.method=='POST':
+        form=ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            return redirect('create_customer')
+    context={
+        'form':form,
+        'cliente':cliente,
+        'clientes':clientes
+    } 
+    return render(request, 'store/customer_form.html', context)  
+
+def deleteCliente(request, pk):
+    cliente=Cliente.objects.get(id=pk)
+    if request.method=='POST':
+        cliente.delete()
+        return redirect('create_customer')
+    context={
+        'item':cliente
+    }
+    return render(request, 'store/borrar.html', context)
 
 def createProduct(request):
     productos= Producto.objects.all()
@@ -132,3 +155,29 @@ def createProduct(request):
         'productos':productos
     }
     return render(request, 'store/products_form.html', context)
+
+def  updateProducto(request, pk):
+    producto=Producto.objects.get(id=pk)
+    productos= Producto.objects.all()
+    form=ProductoForm(instance=producto)
+    if request.method=='POST':
+        form=ProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            return redirect('create_product')
+    context={
+        'form':form,
+        'producto':producto,
+        'productos':productos
+    } 
+    return render(request, 'store/products_form.html', context)  
+
+def deleteProducto(request, pk):
+    producto=Producto.objects.get(id=pk)
+    if request.method=='POST':
+        producto.delete()
+        return redirect('create_customer')
+    context={
+        'item':producto
+    }
+    return render(request, 'store/borrar.html', context)

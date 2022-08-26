@@ -7,6 +7,7 @@ for (btn of updateBtns){
         console.log("user: ", user)
         if(user==="AnonymousUser"){
             console.log("not logged in")
+            updateUserOrder(productId, action)
 
         }else{
             updateUserOrder(productId, action)
