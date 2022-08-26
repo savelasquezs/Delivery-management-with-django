@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.db.models import Q
 import json
 from .models import *
 from .forms import *
@@ -9,12 +10,19 @@ def store(request):
     productos= Producto.objects.all()
     categorias=Categoria.objects.all()
     ropavieja = productos.filter(categoria__nombre="Ropa vieja")
-    
     pedido, created = Pedido.objects.get_or_create( enviado=False)
     items =pedido.pedido_item_set.all()
     cartItems= pedido.get_cart_items
-        
-        
+ 
+    clientes= Cliente.objects.all()
+    busqueda = request.GET.get("buscar")
+    
+    if busqueda:
+        clientes = Cliente.objects.filter(
+            Q(nombre__icontains=busqueda) |
+            Q(direccion__icontains=busqueda) |
+            Q(telefono__icontains=busqueda) 
+        ).distinct()
    
     
     context={
@@ -23,7 +31,8 @@ def store(request):
         'ropavieja': ropavieja,
         'items':items,
         'pedido':pedido,
-        'cartItems':cartItems
+        'cartItems':cartItems,
+        'clientes':clientes,
     }
     return render(request, 'store/store.html', context)
 
@@ -75,26 +84,34 @@ def updateItem(request):
     data = json.loads(request.body)
     productId=data['productId']
     action = data['action']
-    
     print('Action: ', action, '/n','ProductId: ', productId)
-    
-    
     product = Producto.objects.get(id=productId)
     pedido, created = Pedido.objects.get_or_create( enviado=False)
-    
     pedidoItem, created = Pedido_item.objects.get_or_create(pedido=pedido, producto=product)
-    
     if action == 'add':
         pedidoItem.cantidad = (pedidoItem.cantidad + 1)
     elif    action =='remove':
         pedidoItem.cantidad = (pedidoItem.cantidad -1)
-        
     pedidoItem.save()
-    
     if pedidoItem.cantidad <=0:
         pedidoItem.delete()
-    
     return JsonResponse('Item was added', safe=False)
+
+def updateOrderCustomer(request):
+    data = json.loads(request.body)
+    clienteId=data['clienteId']
+    action = data['action']
+    print('Action: ', action, '/n','ClienteId: ', clienteId)
+    cliente = Cliente.objects.get(id=clienteId)
+    pedido, created = Pedido.objects.get_or_create( enviado=False)
+   
+    if action == 'add':
+        pedido.cliente=cliente
+    elif    action =='remove':
+        pedido.cliente.remove()
+    # pedido.save()
+    
+    return JsonResponse('Customer was added', safe=False)
 
 def createCustomer(request):
     clientes= Cliente.objects.all()

@@ -46,37 +46,57 @@
                 <h5>Total:  ${{pedido.get_cart_total|intcomma}} </h5>
             </div>
             <hr>
+
+            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+            method="GET" style="width:70%">
+              {% csrf_token %}
+              <div class="input-group" >
+                <input type="text" class="form-control bg-light border-1 small" placeholder="Buscar..." name="buscar" value="{{ request.POST.buscar }}" style="width:70%;">
+                <div class="input-group-append">
+                  <button class="btn btn-primary " type="submit" >
+                    <i class="fas fa-search fa-sm">Buscar</i>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+
+
             <hr>
             <div class="box-element" id="form-wrapper" >
                 <form id="form">
-                    <p>Información de Envio:</p>
-                    <hr>
-                    <div id="user-info">
-                        <div class="form-field">
-                            <input required class="form-control" type="number" name="tel" placeholder="Telefono">
-                        </div>
-                        <div class="form-field">
-                            <input class="form-control" type="number" name="domi" placeholder="Valor del domicilio">
-                        </div>
-                        <div class="form-field">
-                            <input required class="form-control" type="text" name="nombre" placeholder="Nombre">
-                        </div>
-                        
-                        
-                        <div class="form-field">
-                            <input class="form-control" type="text" name="direccion" placeholder="Dirección">
-                        </div>
-                        <div class="form-field">
-                            <input class="form-control" type="text" name="ciudad" placeholder="Ciudad">
-                        </div>
-                        <div class="form-field">
-                            <input class="form-control" type="text" name="barrio" placeholder="Barrio">
-                        </div>
-                        
-                        <hr>
-                        <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
-                        <a href="{% url 'create_customer' %}" class="btn btn-bg btn-warning me-5">Crear cliente</a>
-                    </div>
+                    
+
+
+
+                    <div class="card card-body">
+                        <table class="table table-sm">
+                          <tr>
+                            <th>Nombre</th>
+                            <th>Telefono</th>
+                            <th>Dirección</th>
+                            <th>Valor del domi</th>
+                            <th>Peticiones particulares</th>
+                            <th>Editar</th>
+                            
+                          </tr>
+                          {% for cliente in clientes %}
+                          <tr>
+                              <td>{{cliente.nombre}} </td>
+                              <td>{{cliente.telefono}} </td>
+                              <td>{{cliente.direccion}} </td>
+                              <td>${{cliente.valor_domi|intcomma}} </td>
+                              <td>{{cliente.pet_particulares}} </td>
+                              <td><a class="btn btn-primary chg-quantity update_customer" data-cliente="{{cliente.id}} " data-action="add">Add</a></td>
+                
+                          </tr>
+                          {% endfor %}
+                        </table>
+                      </div>
+
+
+
+                    
                 </form>
     
             </div>
