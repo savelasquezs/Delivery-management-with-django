@@ -105,3 +105,12 @@ h1,h2,h3,h4,h5,h6{
 form {
 	display: flex
 }
+.card.customer label, .card.customer input{
+	display: block;
+	padding: 5px;
+	width: 90%;
+}
+
+.card.customer label{
+	font-weight: 700;
+}

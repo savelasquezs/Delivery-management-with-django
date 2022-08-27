@@ -14,22 +14,27 @@
 			margin: 0;
 			padding: 0;
 			height: 100%;
-			background: linear-gradient(70deg, #757575, #9E9E9E) !important;
+			background-image:url('/static/images/fondo.jpg');
+			background-repeat:no-repeat;
+			background-size:cover;
+			
 		}
+
 		.user_card {
-			width: 350px;
+			width: 500px;
 			margin-top: auto;
 			margin-bottom: auto;
-			background: #212121;
+			{% comment %} background: rgba(33,33,33,0.5); {% endcomment %}
 			position: relative;
 			display: flex;
 			justify-content: center;
 			flex-direction: column;
-			padding: 10px;
-			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-			-webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-			-moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-			border-radius: 5px;
+			height:70%;
+			backdrop-filter:blur(3px);
+			background-color: rgba(255, 255, 255, 0.05);
+			
+			box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.2);
+			border-radius: 20px;
 
 		}
 
@@ -70,6 +75,10 @@
 		}
 		.errores {
 			color:#fff
+		}
+
+		form{
+			width:70%
 		}
 
 	</style>
@@ -140,7 +149,7 @@
 		form_fields[1].placeholder='Usuario..';
 		form_fields[2].placeholder='Correo electronico..';
 		form_fields[3].placeholder='Contraseña...';
-		form_fields[4].placeholder='Contraseña denuevo...';
+		form_fields[4].placeholder='Contraseña de nuevo...';
 
 
 		for (var field in form_fields){	

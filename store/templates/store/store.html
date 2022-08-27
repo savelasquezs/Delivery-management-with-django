@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row" >
-    <div class="col-lg-8" style="position:absolute; left:0;">
+    <div class="col-lg-7" style="position:absolute; left:0;">
         <div class="row">
             {% for product in productos %}
                 <div class="col-lg-4 col-md-6 col-sm-8">
@@ -21,7 +21,7 @@
             {% endfor %}   
         </div>
     </div>
-    <div class="col-lg-4" style="position: fixed; right:0;">
+    <div class="col-lg-5" style="position: fixed; right:0;">
         <div class="box-element" style="overflow:scroll; max-height:85vh">
             <div class="box-element" id="form-wrapper" >
                 <h3>Resumen de pedido</h3>
@@ -44,6 +44,22 @@
                 {% endfor %}
                 <h5>Productos: {{pedido.get_cart_items}} </h5>
                 <h5>Total:  ${{pedido.get_cart_total|intcomma}} </h5>
+                
+
+
+                <div class="card customer">
+                  <div class="card-body">
+                    <label for="nombre">Nombre</label> 
+                    <input type="text" value="{{cliente.nombre}} " name="nombre" id="nombre">
+                    <label for="telefono">Telefono</label> 
+                    <input type="text" value="{{cliente.telefono}}" name="telefono" id="telefono">
+                    <label for="direccion">Dirección</label> 
+                    <input type="text" value="{{cliente.direccion}}" name="direccion" id="direccion">
+                    <label for="valor_domi">Valor domicilio</label> 
+                    <input type="text" value="${{cliente.valor_domi|intcomma}}" name="valor_domi" id="valor_domi">
+                  </div>
+                </div>
+
             </div>
             <hr>
 
@@ -51,10 +67,11 @@
             method="GET" style="width:70%">
               {% csrf_token %}
               <div class="input-group" >
+              
                 <input type="text" class="form-control bg-light border-1 small" placeholder="Buscar..." name="buscar" value="{{ request.POST.buscar }}" style="width:70%;">
                 <div class="input-group-append">
                   <button class="btn btn-primary " type="submit" >
-                    <i class="fas fa-search fa-sm">Buscar</i>
+                    <i class="fas fa-search fa-sm"></i>
                   </button>
                 </div>
               </div>
@@ -87,7 +104,7 @@
                               <td>{{cliente.direccion}} </td>
                               <td>${{cliente.valor_domi|intcomma}} </td>
                               <td>{{cliente.pet_particulares}} </td>
-                              <td><a class="btn btn-primary chg-quantity update_customer" data-cliente="{{cliente.id}} " data-action="add">Add</a></td>
+                              <td><a class="btn btn-primary  update_customer" data-cliente="{{cliente.id}} " data-action="add">add</a></td>
                 
                           </tr>
                           {% endfor %}

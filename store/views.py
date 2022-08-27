@@ -12,6 +12,7 @@ def store(request):
     ropavieja = productos.filter(categoria__nombre="Ropa vieja")
     pedido, created = Pedido.objects.get_or_create( enviado=False)
     items =pedido.pedido_item_set.all()
+    cliente=pedido.cliente
     cartItems= pedido.get_cart_items
  
     clientes= Cliente.objects.all()
@@ -33,6 +34,8 @@ def store(request):
         'pedido':pedido,
         'cartItems':cartItems,
         'clientes':clientes,
+        'cliente':cliente,
+
     }
     return render(request, 'store/store.html', context)
 
@@ -60,25 +63,38 @@ def checkout(request):
              'pedido':pedido}
     return render(request, 'store/checkout.html', context)   
 
-# def registerPage(request): 
-#     form=CreateUserForm()
-#     if request.method=='POST':
-#         form=CreateUserForm(request.POST)
-#         if form.is_valid():
-#             user=form.save()
-#             username=form.cleaned_data.get('username')
-#             group=Group.objects.get( name="clientes")
-#             user.groups.add(group)
-#             Clientes.objects.create(
-#                 user=user, 
-#                 nombre=username
-#             )
-#             messages.success(request, 'Se ha creado una cuenta para:    ' + username)
-#             return redirect('login')
-#     context={
-#         'form':form
-#     }
-#     return render(request, 'ventas/register.html', context)
+def registerPage(request): 
+    form=CreateUserForm()
+    if request.method=='POST':
+        form=CreateUserForm(request.POST)
+        if form.is_valid():
+            # user=form.save()
+            form.save()
+            # username=form.cleaned_data.get('username')
+            # group=Group.objects.get( name="clientes")
+            # user.groups.add(group)
+            # Cliente.objects.create(
+            #     user=user, 
+            #     nombre=username
+            # )
+            # messages.success(request, 'Se ha creado una cuenta para:    ' + username)
+            return redirect('store')
+    context={
+        'form':form
+    }
+    return render(request, 'store/register.html', context)
+
+def loginPage(request):
+    if request.method=="POST":
+        username=request.POST.get("username")
+        password=request.POST.get("password")
+        # user=authenticate(request, username=username, password=password)
+        # if user is not None:
+        #     login(request, user)
+        #     return redirect('home')
+        # else:
+        #     messages.info(request, "El usuario o contraseña son erroneos")
+    return render(request, 'store/login.html')
 
 def updateItem(request):
     data = json.loads(request.body)
@@ -109,7 +125,7 @@ def updateOrderCustomer(request):
         pedido.cliente=cliente
     elif    action =='remove':
         pedido.cliente.remove()
-    # pedido.save()
+    pedido.save()
     
     return JsonResponse('Customer was added', safe=False)
 
@@ -193,7 +209,7 @@ def deleteProducto(request, pk):
     producto=Producto.objects.get(id=pk)
     if request.method=='POST':
         producto.delete()
-        return redirect('create_customer')
+        return redirect('create_product')
     context={
         'item':producto
     }
