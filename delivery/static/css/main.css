@@ -114,3 +114,9 @@ form {
 .card.customer label{
 	font-weight: 700;
 }
+
+.form-inline span{
+	align-self: center;
+	font-weight: 500;
+	margin-right: 15px;
+}
