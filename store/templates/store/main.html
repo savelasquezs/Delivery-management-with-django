@@ -62,8 +62,10 @@
                         >Tienda</a
                     >
                     </li>
+                    {% if request.user.is_staff %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'create_customer' %}">Clientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'create_product' %}">Productos</a></li>
+                    {% endif %}
                     <li class="nav-item"><a class="nav-link" href="">Pedidos</a></li>
 
                 </ul>
@@ -71,10 +73,12 @@
                     <span >!Hola, {{request.user}} </span>
                     <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar sesión</a>
 
+                    {% if request.user.is_staff %}
                     <a href="{% url 'cart' %}">
                     <img id="cart-icon" src="{% static 'images/cart.png' %}" />
                     </a>
                     <p id="cart-total">{{cartItems}} </p>
+                    {% endif %}
                 </div>
             </div>
       </div>

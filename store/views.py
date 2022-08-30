@@ -1,60 +1,60 @@
+from re import A
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.db.models import Q
 import json
+from store.decorators import unauthenticated
 from .models import *
 from .forms import *
 from django.contrib import messages
-
 from django.contrib.auth import authenticate, login, logout
-
 from django.contrib.auth.decorators import login_required
+from .decorators import *
+from django.contrib.auth.models import Group
+
 
 # Create your views here.
+@unauthenticated
 def registerPage(request): 
-    if request.user.is_authenticated:
-        return redirect('store')
-    else:
-        form=CreateUserForm()
-        if request.method=='POST':
-                form=CreateUserForm(request.POST)
-                if form.is_valid():
-                    # user=form.save()
-                    form.save()
-                    username=form.cleaned_data.get('username')
-                    # group=Group.objects.get( name="clientes")
-                    # user.groups.add(group)
-                    # Cliente.objects.create(
-                    #     user=user, 
-                    #     nombre=username
-                    # )
-                    messages.success(request, 'Se ha creado una cuenta para:    ' + username)
-                    return redirect('login')
-        context={
-            'form':form
-        }
-        return render(request, 'store/register.html', context)
+    form=CreateUserForm()
+    if request.method=='POST':
+            form=CreateUserForm(request.POST)
+            if form.is_valid():
+                # user=form.save()
+                form.save()
+                username=form.cleaned_data.get('username')
+                # group=Group.objects.get( name="clientes")
+                # user.groups.add(group)
+                # Cliente.objects.create(
+                #     user=user, 
+                #     nombre=username
+                # )
+                messages.success(request, 'Se ha creado una cuenta para:    ' + username)
+                return redirect('login')
+    context={
+        'form':form
+    }
+    return render(request, 'store/register.html', context)
 
+@unauthenticated
 def loginPage(request):
-    if request.user.is_authenticated:
+    if request.method=="POST":
+        username=request.POST.get("username")
+        password=request.POST.get("password")
+        user=authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
             return redirect('store')
-    else:
-        if request.method=="POST":
-            username=request.POST.get("username")
-            password=request.POST.get("password")
-            user=authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('store')
-            else:
-                messages.info(request, "El usuario o contraseña son erroneos")
-        return render(request, 'store/login.html')
+        else:
+            messages.info(request, "El usuario o contraseña son erroneos")
+    return render(request, 'store/login.html')
         
 def logoutPage(request):
     logout(request)
     return redirect('login')
 
 @login_required(login_url='login')
+@admin_only
 def store(request):
     productos= Producto.objects.all()
     categorias=Categoria.objects.all()
@@ -85,6 +85,7 @@ def store(request):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def cart(request):
     pedido, created = Pedido.objects.get_or_create( enviado=False)
     items =pedido.pedido_item_set.all()
@@ -99,6 +100,8 @@ def checkout(request):
     context={'items':items,
              'pedido':pedido}
     return render(request, 'store/checkout.html', context)   
+
+
 
 @login_required(login_url='login')
 def updateItem(request):
@@ -133,6 +136,7 @@ def updateOrderCustomer(request):
         pedido.cliente.remove()
     pedido.save()
     return JsonResponse('Customer was added', safe=False)
+
 
 
 @login_required(login_url='login')
@@ -180,6 +184,7 @@ def deleteCliente(request, pk):
     return render(request, 'store/borrar.html', context)
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def createProduct(request):
     productos= Producto.objects.all()
     form = ProductoForm()
@@ -199,6 +204,7 @@ def createProduct(request):
     return render(request, 'store/products_form.html', context)
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def  updateProducto(request, pk):
     producto=Producto.objects.get(id=pk)
     productos= Producto.objects.all()
@@ -216,6 +222,7 @@ def  updateProducto(request, pk):
     return render(request, 'store/products_form.html', context)  
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def deleteProducto(request, pk):
     producto=Producto.objects.get(id=pk)
     if request.method=='POST':
@@ -225,3 +232,9 @@ def deleteProducto(request, pk):
         'item':producto
     }
     return render(request, 'store/borrar.html', context)
+
+    
+def delivery(request):
+    context={}
+    
+    return render(request,'store/delivery.html', context )
