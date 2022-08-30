@@ -49,14 +49,20 @@
 
                 <div class="card customer">
                   <div class="card-body">
-                    <label for="nombre">Nombre</label> 
-                    <input type="text" value="{{cliente.nombre}} " name="nombre" id="nombre">
-                    <label for="telefono">Telefono</label> 
-                    <input type="text" value="{{cliente.telefono}}" name="telefono" id="telefono">
-                    <label for="direccion">Dirección</label> 
-                    <input type="text" value="{{cliente.direccion}}" name="direccion" id="direccion">
-                    <label for="valor_domi">Valor domicilio</label> 
-                    <input type="text" value="${{cliente.valor_domi|intcomma}}" name="valor_domi" id="valor_domi">
+                      <form action="" class="form" style="display:grid">
+                          <label for="nombre">Nombre</label> 
+                          <input type="text" value="{{cliente.nombre}} " name="nombre" id="nombre">
+                          <label for="telefono">Telefono</label> 
+                          <input type="text" value="{{cliente.telefono}}" name="telefono" id="telefono">
+                          <label for="direccion">Dirección</label> 
+                          <input type="text" value="{{cliente.direccion}}" name="direccion" id="direccion">
+                          <label for="valor_domi">Valor domicilio</label> 
+                          
+                          <input type="text" value="{{cliente.valor_domi}}" name="valor_domi" id="valor_domi">
+                          <div style="display:flex; justify-content:center">
+                            <button class="btn btn-warning make-order" type="submit" style="margin-top:20px; font-weight:500" >Confirmar pedido</button>
+                          </div>
+                      </form>
                   </div>
                 </div>
 
@@ -121,6 +127,50 @@
 		</div>
     </div>
 </div>
+
+<script>
+  var total={{pedido.get_cart_total}}
+
+  document.querySelector('.make-order').addEventListener('click', submitFormData)
+  var form =  document.querySelector('.form')
+  form.addEventListener('submit', function(e){
+    e.preventDefault()
+    console.log("form submited")
+  })
+  function submitFormData(){
+    console.log('funciona el click')
+
+    var UserFormData={
+      'nombre':form.nombre.value,
+      'telefono':form.telefono.value,
+      'direccion':form.direccion.value,
+      'valor_domi':form.valor_domi.value,
+      'total':total
+
+    }
+    console.log(UserFormData.nombre)
+
+
+ 
+    var url ='/process_order'
+    fetch(url,{
+      method:'POST',
+      headers: {
+        'Content-Type':'application/json',
+        'X-CSRFToken':csrftoken,
+      },
+      body:JSON.stringify({'form':UserFormData})
+    }) 
+    .then((response)=>response.json())
+    .then((data)=>{
+      console.log('success:', data);
+      alert('Pedido tomado');
+      window.location.href="{% url 'store' %}"
+    }) 
+
+  }
+
+</script>
     
 {% endblock content %}
 

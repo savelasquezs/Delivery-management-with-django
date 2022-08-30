@@ -1,4 +1,4 @@
-from re import A
+import datetime
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.db.models import Q
@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import *
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 
 
 # Create your views here.
@@ -20,15 +21,15 @@ def registerPage(request):
     if request.method=='POST':
             form=CreateUserForm(request.POST)
             if form.is_valid():
-                # user=form.save()
-                form.save()
+                user=form.save()
+                # form.save()
                 username=form.cleaned_data.get('username')
-                # group=Group.objects.get( name="clientes")
-                # user.groups.add(group)
-                # Cliente.objects.create(
-                #     user=user, 
-                #     nombre=username
-                # )
+                group=Group.objects.get( name="delivery")
+                user.groups.add(group)
+                Usuario.objects.create(
+                    usuario=user, 
+                    nombre=username
+                )
                 messages.success(request, 'Se ha creado una cuenta para:    ' + username)
                 return redirect('login')
     context={
@@ -59,7 +60,7 @@ def store(request):
     productos= Producto.objects.all()
     categorias=Categoria.objects.all()
     ropavieja = productos.filter(categoria__nombre="Ropa vieja")
-    pedido, created = Pedido.objects.get_or_create( enviado=False)
+    pedido, created = Pedido.objects.get_or_create( tomado=False)
     items =pedido.pedido_item_set.all()
     cliente=pedido.cliente
     cartItems= pedido.get_cart_items
@@ -87,7 +88,7 @@ def store(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def cart(request):
-    pedido, created = Pedido.objects.get_or_create( enviado=False)
+    pedido, created = Pedido.objects.get_or_create( tomado=False)
     items =pedido.pedido_item_set.all()
     context={'items':items,
              'pedido':pedido}
@@ -95,7 +96,7 @@ def cart(request):
 
 @login_required(login_url='login')
 def checkout(request):
-    pedido, created = Pedido.objects.get_or_create(enviado=False)
+    pedido, created = Pedido.objects.get_or_create(tomado=False)
     items =pedido.pedido_item_set.all()
     context={'items':items,
              'pedido':pedido}
@@ -110,7 +111,7 @@ def updateItem(request):
     action = data['action']
     print('Action: ', action, '/n','ProductId: ', productId)
     product = Producto.objects.get(id=productId)
-    pedido, created = Pedido.objects.get_or_create( enviado=False)
+    pedido, created = Pedido.objects.get_or_create( tomado=False)
     pedidoItem, created = Pedido_item.objects.get_or_create(pedido=pedido, producto=product)
     if action == 'add':
         pedidoItem.cantidad = (pedidoItem.cantidad + 1)
@@ -129,7 +130,7 @@ def updateOrderCustomer(request):
     action = data['action']
     print('Action: ', action, '/n','ClienteId: ', clienteId)
     cliente = Cliente.objects.get(id=clienteId)
-    pedido, created = Pedido.objects.get_or_create( enviado=False)
+    pedido, created = Pedido.objects.get_or_create( tomado=False)
     if action == 'add':
         pedido.cliente=cliente
     elif    action =='remove':
@@ -238,3 +239,34 @@ def delivery(request):
     context={}
     
     return render(request,'store/delivery.html', context )
+
+def processOrder(request):
+    transaction_id=datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+    pedido, created = Pedido.objects.get_or_create( tomado=False)
+    cliente=pedido.cliente
+    total = data['form']['total']
+    
+    
+       
+    if total==pedido.get_cart_total:
+        pedido.transaction_id=transaction_id
+        pedido.tomado=True
+        
+        
+        Envio.objects.create(
+            cliente=cliente,
+            pedido=pedido,
+            direccion=data['form']['direccion'],
+            telefono=data['form']['telefono'],
+            nombre=data['form']['nombre'],
+            valor_domi=data['form']['valor_domi']  
+        )
+        
+      
+    
+    else:
+        print("something went wrong")
+    pedido.save() 
+    
+    return JsonResponse('Pedido agregado exitosamente', safe=False)
