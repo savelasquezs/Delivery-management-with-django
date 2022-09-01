@@ -65,9 +65,9 @@
                     {% if request.user.is_staff %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'create_customer' %}">Clientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'create_product' %}">Productos</a></li>
+                    
+                    <li class="nav-item"><a class="nav-link" href="{% url 'entregas' %}">Pedidos</a></li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="">Pedidos</a></li>
-
                 </ul>
                 <div class="form-inline my-2 my-lg-0 login_cart">
                     <span >!Hola, {{request.user}} </span>
@@ -88,6 +88,8 @@
       {% block content %} {% endblock content %}
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
       integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
@@ -100,5 +102,7 @@
       
     ></script>
     <script src="{% static 'js/cart.js' %}"></script>
+    {% block script %}
+    {% endblock script %}
   </body>
 </html>

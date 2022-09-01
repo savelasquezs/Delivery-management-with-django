@@ -1,0 +1,68 @@
+{% extends 'store/main.html' %}
+ {% load static %}
+ {% load humanize %}
+
+ {% block content %}
+ <div class="card card-body">
+    <table class="table table-sm">
+      <tr>
+        <th>Nombre</th>
+        <th>Cliente</th>
+        <th>Telefono</th>
+        <th>liquidar</th>
+        
+      </tr>
+      {% for persona in domiciliarios %}
+      <tr>
+          <td>{{persona.id}} </td>
+          <td>{{persona.nombre}} </td>
+          <td>{{persona.telefono}} </td>
+                    
+          <td><a href="{% url 'liquidarDomi' persona.id %}" class="btn btn-primary"> liquidar</a></td>
+
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+<hr>
+<div class="col-md-12">
+    <br />
+    
+    <h4>Pedidos</h4>
+    <h4>total: {{total}}</h4>
+    <h4>numero de pedidos: {{numero}}</h4>
+
+    <hr />
+    <div class="card card-body">
+      <table class="table table-sm">
+        <tr>
+          <th>Pedido #</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>dirección</th>
+          <th>domiciliario</th>
+          <th>fecha</th>
+          <th>Editar</th>
+          <th>Borrar</th>
+          
+        </tr>
+        {% for pedido in pedidos %}
+        <tr>
+            <td> {{pedido.id}}</td>
+            <td>{{pedido.nombre}} </td>
+            <td>${{pedido.total|intcomma}} </td>
+            <td>{{pedido.direccion}} </td>
+            <td>{{pedido.direccion}} </td>
+            <td>{{pedido.domiciliario}} </td>
+            <td>{{pedido.fecha}} </td>
+
+            <td><a href="{% url 'update_pedido' pedido.id %}" class="btn btn-primary mostrar"> Editar</a></td>
+            <td><a href="{% url 'borrar_pedido' pedido.id %}" class="btn btn-danger mostrar"> Borrar</a></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+
+ {% endblock content %}

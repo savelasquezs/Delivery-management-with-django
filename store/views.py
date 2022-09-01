@@ -22,7 +22,7 @@ def registerPage(request):
             form=CreateUserForm(request.POST)
             if form.is_valid():
                 user=form.save()
-                # form.save()
+                
                 username=form.cleaned_data.get('username')
                 group=Group.objects.get( name="delivery")
                 user.groups.add(group)
@@ -236,7 +236,10 @@ def deleteProducto(request, pk):
 
     
 def delivery(request):
-    context={}
+    pedidos=Envio.objects.filter(domiciliario__isnull=True)
+    context={
+        'pedidos':pedidos
+    }
     
     return render(request,'store/delivery.html', context )
 
@@ -246,27 +249,97 @@ def processOrder(request):
     pedido, created = Pedido.objects.get_or_create( tomado=False)
     cliente=pedido.cliente
     total = data['form']['total']
-    
-    
-       
     if total==pedido.get_cart_total:
         pedido.transaction_id=transaction_id
         pedido.tomado=True
-        
-        
         Envio.objects.create(
             cliente=cliente,
             pedido=pedido,
             direccion=data['form']['direccion'],
             telefono=data['form']['telefono'],
             nombre=data['form']['nombre'],
-            valor_domi=data['form']['valor_domi']  
+            valor_domi=data['form']['valor_domi'], 
+            total=total 
         )
-        
-      
-    
     else:
         print("something went wrong")
     pedido.save() 
     
     return JsonResponse('Pedido agregado exitosamente', safe=False)
+
+    
+def asignarPedido(request, pk):
+    pedido=Envio.objects.get(id=pk)
+    user = request.user.usuario
+    if request.method=='POST':
+        pedido.domiciliario=user
+        pedido.save()
+        print(request.user)
+        print(request.user.usuario)
+        return redirect('delivery_page')
+    else:
+        print("so sorry")
+        print(request.method)
+
+    context={
+        'item':pedido
+    }
+    return render(request, 'store/asignar.html', context)
+
+def entregas(request):
+    pedidos=Envio.objects.all()
+    form=PedidoForm()
+    context={'pedidos':pedidos,
+             'form':form}
+    return render(request, 'store/orders.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def  updatePedido(request, pk):
+    pedido=Envio.objects.get(id=pk)
+    pedidos= Envio.objects.all()
+    form=PedidoForm(instance=pedido)
+    if request.method=='POST':
+        form=PedidoForm(request.POST, instance=pedido)
+        if form.is_valid():
+            form.save()
+            return redirect('entregas')
+    context={
+        'form':form,
+        'pedido':pedido,
+        'pedidos':pedidos
+    } 
+    return render(request, 'store/orders.html', context)  
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def deletePedido(request, pk):
+    pedido=Envio.objects.get(id=pk)
+    if request.method=='POST':
+        pedido.delete()
+        return redirect('entregas')
+    context={
+        'item':pedido
+    }
+    return render(request, 'store/borrar.html', context)
+
+def liquidar(request):
+    domiciliarios=Usuario.objects.all()
+    
+    context={'domiciliarios':domiciliarios, 
+             }
+    return render(request, 'store/liquidar.html', context)
+
+def liquidarDomi(request, pk):
+    domiciliarios=Usuario.objects.all()
+    domiciliario=Usuario.objects.get(id=pk)
+    pedidos = Envio.objects.filter(domiciliario=domiciliario)
+    numero = pedidos.count()
+    total = sum([item.total for item in pedidos])
+    print(total)
+    context={'domiciliarios':domiciliarios, 
+           'domiciliario':domiciliario, 
+           'pedidos':pedidos, 
+           'numero':numero,
+           'total':total}
+    return render(request, 'store/liquidar.html', context)

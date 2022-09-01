@@ -10,6 +10,9 @@ class Usuario(models.Model):
     telefono = models.CharField(max_length=200, null=True)
     direccion = models.CharField(max_length=200, null=True, blank=True)
 
+    def __str__(self):
+        return self.nombre
+    
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=200, null=True)
@@ -103,11 +106,17 @@ class Envio (models.Model):
     telefono = models.CharField(max_length=200,default="0" )
     nombre = models.CharField(max_length=200,default="sin nombre" )
     valor_domi = models.IntegerField(default=0)   
-    domiciliario = models.ForeignKey(Domiciliario, on_delete=models.SET_NULL, null=True, blank=True)
+    domiciliario = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_envio = models.DateTimeField(auto_now_add=True)
+    total = models.IntegerField(default=0)
     
     def __str__(self):
         return self.direccion
+    
+class Abonos(models.Model):
+    domiciliario = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True)
+    valor=models.IntegerField(default=0)
+    fecha_abono = models.DateTimeField(auto_now_add=True)
     
     
     

@@ -1,0 +1,15 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <div class="card card-body d-flex justify-align-content-around align-items-center">
+        <form action="" method='POST' class="">
+            {% csrf_token %}
+            <h4>Esta seguro que quiere asignar a: {{item}}? </h4>
+            <div class="mt-5 d-flex justify-content-around align-items-center">
+                <a href="{% url 'delivery_page' %}" class="btn btn-warning">Cancelar</a>
+                <input type="submit" value="Confirmar" class="btn btn-danger">
+            </div>
+        </form> 
+    </div>
+{% endblock content %}  

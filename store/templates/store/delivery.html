@@ -3,5 +3,45 @@
  {% load humanize %}
 
  {% block content %}
- <h3>Soy un domiciliario</h3>
+ <h3>Pedidos por entregar</h3>
+ <div class="card card-body">
+    <table class="table table-sm">
+      <tr>
+        <th>Numero pedido</th>
+        <th>Cliente</th>
+        <th>Dirección</th>
+        <th>Fecha de pedido</th>
+        <th>Total</th>
+        <th>asignar</th>
+        
+      </tr>
+      {% for pedido in pedidos %}
+      <tr>
+          <td>{{pedido.id}} </td>
+          <td>{{pedido.cliente.nombre}} </td>
+          <td>{{pedido.direccion}} </td>
+          <td>{{pedido.fecha_envio}} </td>
+          <td>{{pedido.total}} </td>
+          
+          <td><a href="{% url 'asignar' pedido.id %}" class="btn btn-primary"> Editar</a></td>
+
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+
+
+  <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick=''>
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="edicion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  
+</div>
+
  {% endblock content %}
+
+

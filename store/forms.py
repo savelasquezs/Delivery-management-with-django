@@ -22,5 +22,5 @@ class ProductoForm(ModelForm):
 
 class PedidoForm(ModelForm):
     class Meta:
-        model= Pedido
+        model= Envio
         fields='__all__'

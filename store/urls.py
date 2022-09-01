@@ -9,6 +9,7 @@ urlpatterns = [
     
     
     path("delivery", views.delivery, name="delivery_page"),  
+    path("asignar/<str:pk>", views.asignarPedido, name="asignar"),
     
     
     
@@ -29,7 +30,16 @@ urlpatterns = [
     path("update_producto/<str:pk>", views.updateProducto, name="update_producto"),
     path("borrar_producto/<str:pk>", views.deleteProducto, name="borrar_producto"), 
     
-    path("borrar_producto/<str:pk>", views.deleteProducto, name="borrar_producto"),   
+  
+    
+    path("entregas", views.entregas, name="entregas"),
+    path("update_pedido/<str:pk>", views.updatePedido, name="update_pedido"),
+    path("borrar_pedido/<str:pk>", views.deletePedido, name="borrar_pedido"), 
+    
+    path("liquidar/", views.liquidar, name="liquidar"), 
+    path("liquidar/<str:pk>", views.liquidarDomi, name="liquidarDomi"),    
+       
+       
     
       
     

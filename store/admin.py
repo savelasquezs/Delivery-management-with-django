@@ -8,6 +8,8 @@ admin.site.register(Domiciliario)
 admin.site.register(Pedido)
 admin.site.register(Pedido_item)
 admin.site.register(Envio)
+admin.site.register(Usuario)
+
 
 
 
